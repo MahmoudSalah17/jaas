@@ -1,0 +1,39 @@
+swarm:
+  deployment:
+    jpa-sample.war:
+      web:
+        login-config:
+          auth-method: BASIC
+          security-domain: my-domain
+        security-constraints:
+          - url-pattern: /jpa-demo/admin/*
+            methods: [PUT, POST, DELETE]
+            roles: [admin]
+          - url-pattern: /jpa-demo/user/*
+            methods: [GET, PUT]
+            roles: [user]
+  security:
+    security-domains:
+      my-domain:
+        classic-authentication:
+          login-modules:
+            Database:
+              code: Database
+              flag: required
+              module-options:
+                dsJndiName: java:jboss/datasources/authdb
+                principalsQuery: SELECT PASSWORD FROM USERS WHERE NAME=?
+                rolesQuery: SELECT ROLE, 'Roles' FROM USERS WHERE NAME=?
+  datasources:
+    data-sources:
+      studentdb:
+        driver-name: mysql
+        connection-url: jdbc:mysql://localhost:3306/studentdb
+        user-name: root
+        password: root
+
+      authdb:
+        driver-name: mysql
+        connection-url: jdbc:mysql://localhost:3306/authdb
+        user-name: root
+        password: root
